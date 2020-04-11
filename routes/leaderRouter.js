@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser =require('body-parser');
 const leaderRouter = express.Router();
 const mongoose = require('mongoose');
+const authenticate = require('../authenticate');
 const leaders = require('../models/leaders');
 
 
@@ -16,7 +17,7 @@ leaderRouter.route('/')
     },(err)=>next(err))
     .catch((err) => next(err));
 })
-.post((req,res,next) =>{
+.post(authenticate.verifyUser,(req,res,next) =>{
     leaders.create(req.body)
    .then((leader)=>{
        console.log('Leader Created');
@@ -27,11 +28,11 @@ leaderRouter.route('/')
 
    .catch((err) => next(err));
 })
-.put((req,res,next) =>{
+.put(authenticate.verifyUser,(req,res,next) =>{
     res.statusCode =403;
     res.end("Put method not supported on Leaders");
 })
-.delete((req,res,next) =>{
+.delete(authenticate.verifyUser,(req,res,next) =>{
     leaders.remove({})
    .then((resp) =>{
     res.statusCode =200;
@@ -50,11 +51,11 @@ leaderRouter.route('/:leaderId')
            },(err)=>next(err))
            .catch((err) => next(err));
     })
-.post((req,res,next) =>{
+.post(authenticate.verifyUser,(req,res,next) =>{
         res.statusCode=403;
         res.end("post method not supported on/leaders/"+req.params.leaderId);
     })
-.put((req,res,next) =>{
+.put(authenticate.verifyUser,(req,res,next) =>{
     leaders.findByIdAndUpdate(req.params.leaderId,{
         $set: req.body
     },{new:true})
@@ -65,7 +66,7 @@ leaderRouter.route('/:leaderId')
        },(err)=>next(err))
        .catch((err) => next(err));
 })
-.delete((req,res,next) =>{
+.delete(authenticate.verifyUser,(req,res,next) =>{
     leaders.findByIdAndRemove(req.params.leaderId)
     .then((resp) =>{
         res.statusCode =200;
