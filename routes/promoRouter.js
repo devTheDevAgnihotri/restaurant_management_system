@@ -10,7 +10,7 @@ const cors = require('./cors');
 promoRouter.use(bodyParser.json());
 promoRouter.route('/')
 .get(cors.cors,(req,res,next) =>{
-    Promos.find({})
+    Promos.find(req.query)
     .then((Promos)=>{
         res.statusCode =200;
         res.setHeader('Content-Type','application/json');
